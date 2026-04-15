@@ -6,7 +6,14 @@ echo "=== Neovim Setup ==="
 # Dependencies: git, gcc, make, ripgrep (telescope), fd (telescope), unzip, curl
 echo "Installing dependencies..."
 sudo apt-get update
-sudo apt-get install -y git gcc make ripgrep fd-find unzip curl npm
+sudo apt-get install -y git gcc make ripgrep fd-find unzip curl
+
+# Install node/npm via nodesource (apt npm is often broken on Ubuntu)
+if ! command -v npm &>/dev/null; then
+  echo "Installing Node.js + npm..."
+  curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+fi
 
 # Install neovim (latest stable from GitHub releases, apt version is usually outdated)
 if command -v nvim &>/dev/null; then
