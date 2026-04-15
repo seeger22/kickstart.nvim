@@ -15,6 +15,12 @@ if ! command -v npm &>/dev/null; then
   sudo apt-get install -y nodejs
 fi
 
+# Install tree-sitter CLI (needed for treesitter parser compilation)
+if ! command -v tree-sitter &>/dev/null; then
+  echo "Installing tree-sitter-cli..."
+  sudo npm install -g tree-sitter-cli
+fi
+
 # Install neovim (latest stable from GitHub releases, apt version is usually outdated)
 if command -v nvim &>/dev/null; then
   echo "Neovim already installed: $(nvim --version | head -1)"
