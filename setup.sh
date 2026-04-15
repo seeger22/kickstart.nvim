@@ -21,9 +21,16 @@ else
   echo "Installed: $(nvim --version | head -1)"
 fi
 
-# Clone config
-if [ -d "$HOME/.config/nvim" ]; then
-  echo "Nvim config already exists at ~/.config/nvim, skipping clone"
+# Link or clone config
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+if [ "$SCRIPT_DIR" = "$HOME/.config/nvim" ]; then
+  echo "Already running from ~/.config/nvim"
+elif [ -d "$HOME/.config/nvim" ]; then
+  echo "Nvim config already exists at ~/.config/nvim, skipping"
+elif [ -f "$SCRIPT_DIR/init.lua" ]; then
+  echo "Linking $SCRIPT_DIR -> ~/.config/nvim"
+  mkdir -p "$HOME/.config"
+  ln -sf "$SCRIPT_DIR" "$HOME/.config/nvim"
 else
   echo "Cloning config..."
   mkdir -p "$HOME/.config"

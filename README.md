@@ -10,12 +10,11 @@ One-liner to install neovim + this config from scratch:
 curl -fsSL https://raw.githubusercontent.com/seeger22/kickstart.nvim/master/setup.sh | bash
 ```
 
-Or step by step:
+Or clone anywhere and run the script — it symlinks itself to `~/.config/nvim`:
 
 ```bash
-git clone https://github.com/seeger22/kickstart.nvim.git ~/.config/nvim
-cd ~/.config/nvim
-bash setup.sh
+git clone https://github.com/seeger22/kickstart.nvim.git ~/kickstart.nvim
+bash ~/kickstart.nvim/setup.sh
 ```
 
 ## What's Included
