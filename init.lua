@@ -1,89 +1,3 @@
---[[
-
-=====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
-=====================================================================
-========                                    .-----.          ========
-========         .----------------------.   | === |          ========
-========         |.-""""""""""""""""""-.|   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||   KICKSTART.NVIM   ||   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||                    ||   |-----|          ========
-========         ||:Tutor              ||   |:::::|          ========
-========         |'-..................-'|   |____o|          ========
-========         `"")----------------(""`   ___________      ========
-========        /::::::::::|  |::::::::::\  \ no mouse \     ========
-========       /:::========|  |==hjkl==:::\  \ required \    ========
-========      '""""""""""""'  '""""""""""""'  '""""""""""'   ========
-========                                                     ========
-=====================================================================
-=====================================================================
-
-What is Kickstart?
-
-  Kickstart.nvim is *not* a distribution.
-
-  Kickstart.nvim is a starting point for your own configuration.
-    The goal is that you can read every line of code, top-to-bottom, understand
-    what your configuration is doing, and modify it to suit your needs.
-
-    Once you've done that, you can start exploring, configuring and tinkering to
-    make Neovim your own! That might mean leaving Kickstart just the way it is for a while
-    or immediately breaking it into modular pieces. It's up to you!
-
-    If you don't know anything about Lua, I recommend taking some time to read through
-    a guide. One possible example which will only take 10-15 minutes:
-      - https://learnxinyminutes.com/docs/lua/
-
-    After understanding a bit more about Lua, you can use `:help lua-guide` as a
-    reference for how Neovim integrates Lua.
-    - :help lua-guide
-    - (or HTML version): https://neovim.io/doc/user/lua-guide.html
-
-Kickstart Guide:
-
-  TODO: The very first thing you should do is to run the command `:Tutor` in Neovim.
-
-    If you don't know what this means, type the following:
-      - <escape key>
-      - :
-      - Tutor
-      - <enter key>
-
-    (If you already know the Neovim basics, you can skip this step.)
-
-  Once you've completed that, you can continue working through **AND READING** the rest
-  of the kickstart init.lua.
-
-  Next, run AND READ `:help`.
-    This will open up a help window with some basic information
-    about reading, navigating and searching the builtin help documentation.
-
-    This should be the first place you go to look when you're stuck or confused
-    with something. It's one of my favorite Neovim features.
-
-    MOST IMPORTANTLY, we provide a keymap "<space>sh" to [s]earch the [h]elp documentation,
-    which is very useful when you're not exactly sure of what you're looking for.
-
-  I have left several `:help X` comments throughout the init.lua
-    These are hints about where to find more information about the relevant settings,
-    plugins or Neovim features used in Kickstart.
-
-   NOTE: Look for lines like this
-
-    Throughout the file. These are for you, the reader, to help you understand what is happening.
-    Feel free to delete them once you know what you're doing, but they should serve as a guide
-    for when you are first encountering a few different constructs in your Neovim config.
-
-If you experience any errors while trying to install kickstart, run `:checkhealth` for more info.
-
-I hope you enjoy your Neovim journey,
-- TJ
-
-P.S. You can delete this when you're done too. It's your config now! :)
---]]
-
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -91,7 +5,11 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
+
+-- Skips default Netrw, use oil instead
+vim.g.loaded_netrwPlugin = 1
+vim.g.loaded_netrw = 1
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -102,7 +20,7 @@ vim.g.have_nerd_font = false
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -198,10 +116,10 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -218,6 +136,13 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
 -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
+-- Copy current file path to clipboard
+vim.keymap.set('n', '<leader>yp', function()
+  local path = vim.fn.expand '%:p'
+  vim.fn.setreg('+', path)
+  vim.notify('Copied: ' .. path)
+end, { desc = '[Y]ank file [P]ath' })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -228,6 +153,55 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function() vim.hl.on_yank() end,
+})
+
+-- Auto opens csv file using csvlens CLI, auto closes if quit
+-- Auto close forces the unmodified file logic
+vim.api.nvim_create_autocmd('BufEnter', {
+  pattern = '*.csv',
+  callback = function(args)
+    local file = vim.fn.shellescape(vim.api.nvim_buf_get_name(args.buf))
+    vim.cmd('bwipeout! ' .. args.buf)
+    vim.cmd('terminal csvlens ' .. file)
+    local term_buf = vim.api.nvim_get_current_buf()
+    vim.cmd 'startinsert'
+    vim.api.nvim_create_autocmd('TermClose', {
+      buffer = term_buf,
+      once = true,
+      callback = function()
+        vim.schedule(function()
+          local bufs = vim.tbl_filter(
+            function(b) return vim.api.nvim_buf_is_valid(b) and b ~= term_buf and (vim.bo[b].buflisted or vim.bo[b].filetype == 'oil') end,
+            vim.api.nvim_list_bufs()
+          )
+          if #bufs > 0 then
+            vim.cmd('buffer ' .. bufs[1])
+            vim.cmd('bd! ' .. term_buf)
+          else
+            vim.cmd 'qa!'
+          end
+        end)
+      end,
+    })
+  end,
+})
+
+-- Force snacks.nvim to re-render images when re-entering buffer (fixes oil.nvim back-and-forth in tmux)
+-- When leaving an image buffer, snacks sets placement.hidden=true but never resets it on re-enter
+vim.api.nvim_create_autocmd('BufEnter', {
+  callback = function(args)
+    if vim.bo[args.buf].filetype ~= 'image' then return end
+    vim.schedule(function()
+      local file = vim.api.nvim_buf_get_name(args.buf)
+      local ok, img = pcall(Snacks.image.image.new, file)
+      if not ok or not img then return end
+      for _, p in pairs(img.placements) do
+        p.hidden = false
+        p._state = nil
+        p:update()
+      end
+    end)
+  end,
 })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
@@ -286,6 +260,76 @@ require('lazy').setup({
         topdelete = { text = '‾' }, ---@diagnostic disable-line: missing-fields
         changedelete = { text = '~' }, ---@diagnostic disable-line: missing-fields
       },
+    },
+  },
+  { -- Images in nvim
+    'folke/snacks.nvim',
+    opts = {
+      image = {},
+    },
+  },
+  { -- File explorer
+    'stevearc/oil.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    opts = {
+      columns = {
+        'icon',
+        'size',
+        'mtime',
+      },
+      keymaps = { -- <SPACE> + y to copy file path to clipboard
+        ['<leader>t'] = { 'actions.select', opts = { tab = true }, desc = 'Open in new tab' },
+        ['<C-s>'] = {
+          callback = function()
+            local oil_win = vim.api.nvim_get_current_win()
+            require('oil.actions').select.callback { vertical = true }
+            vim.defer_fn(function()
+              if vim.api.nvim_win_is_valid(oil_win) then vim.api.nvim_win_set_width(oil_win, math.floor(vim.o.columns * 0.2)) end
+            end, 50)
+          end,
+          desc = 'Open in split (oil 20%, file 80%)',
+        },
+        ['<leader>o'] = {
+          callback = function()
+            local entry = require('oil').get_cursor_entry()
+            local dir = require('oil').get_current_dir()
+            if entry and dir then vim.fn.system('open ' .. vim.fn.shellescape(dir .. entry.name)) end
+          end,
+          desc = 'Open in native program',
+        },
+        ['<leader>y'] = {
+          callback = function()
+            local entry = require('oil').get_cursor_entry()
+            local dir = require('oil').get_current_dir()
+            if entry and dir then
+              local path = dir .. entry.name
+              vim.fn.setreg('+', path)
+              vim.notify('Copied: ' .. path)
+            end
+          end,
+          desc = 'Copy file path to clipboard',
+        },
+      },
+      view_options = {
+        show_hidden = true,
+      },
+    },
+    config = function(_, opts)
+      require('oil').setup(opts)
+      vim.keymap.set('n', '-', '<cmd>Oil<cr>', { desc = 'Open parent directory' })
+    end,
+    lazy = false,
+  },
+  { -- Cursor animations
+    'sphamba/smear-cursor.nvim',
+    opts = {
+      stiffness = 0.8,
+      trailing_stiffness = 0.6,
+      stiffness_insert_mode = 0.7,
+      trailing_stiffness_insert_mode = 0.7,
+      damping = 0.95,
+      damping_insert_mode = 0.95,
+      distance_stop_animating = 0.5,
     },
   },
 
