@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "=== Neovim Setup ==="
+echo "=== Neovim Setup (Ubuntu) ==="
 
 # Dependencies: git, gcc, make, ripgrep (telescope), fd (telescope), unzip, curl
 echo "Installing dependencies..."
