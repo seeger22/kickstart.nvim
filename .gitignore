@@ -12,3 +12,6 @@ spell/
 lazy-lock.json
 
 .DS_Store
+
+# Work-specific config (credentials, internal hosts). See init.lua.
+lua/private/
